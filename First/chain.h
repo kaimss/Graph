@@ -18,8 +18,55 @@ public:
 	T* eraseElement(int theVertex);
 	void insert(int theIndex, const T& theElement);
 	void output(ostream& out) const;
+	chainNode<T>* getfirstNode() { return firstNode; }
 
-private:
+
+	// iterators to start and end of list
+	class iterator;
+	iterator begin() { return iterator(firstNode); }
+	iterator end() { return iterator(NULL); }
+
+	// iterator for chain
+	class iterator
+	{
+	public:
+
+		// constructor
+		iterator(chainNode<T>* theNode = NULL)
+		{
+			node = theNode;
+		}
+
+		// dereferencing operators
+		T& operator*() const { return node->element; }
+		T* operator->() const { return &node->element; }
+
+		// increment
+		iterator& operator++()   // preincrement
+		{
+			node = node->next; return *this;
+		}
+		iterator operator++(int) // postincrement
+		{
+			iterator old = *this;
+			node = node->next;
+			return old;
+		}
+
+		// equality testing
+		bool operator!=(const iterator right) const
+		{
+			return node != right.node;
+		}
+		bool operator==(const iterator right) const
+		{
+			return node == right.node;
+		}
+	protected:
+		chainNode<T>* node;
+	};  // end of iterator class
+
+protected:
 	void checkIndex(int theIndex);
 	chainNode<T>* firstNode;
 	int listSize;

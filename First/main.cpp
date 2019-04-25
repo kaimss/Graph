@@ -1,6 +1,7 @@
 #include"linkedWDigraph.h"
 #include<iostream>
 using namespace std;
+#define _CRT_SECURE_NO_WARNINGS
 int main()
 {
 	try {
@@ -15,33 +16,43 @@ int main()
 		g.insertEdge(new edge<int>(2, 1, 3));
 		g.insertEdge(new edge<int>(1, 4, 4));
 		g.insertEdge(new edge<int>(4, 2, 5));
-		cout << "The graph is" << endl;
-		cout << "Number of Vertices = " << g.numberOfVertices() << endl;
-		cout << "Number of Edges = " << g.numberOfEdges() << endl;
-		cout << g << endl;
-		cout << endl;
+		//cout << "The graph is" << endl;
+		//cout << "Number of Vertices = " << g.numberOfVertices() << endl;
+		//cout << "Number of Edges = " << g.numberOfEdges() << endl;
+		//cout << g << endl;
+		//cout << endl;
 
-		g.eraseEdge(2, 1);
-		cout << "The graph after deleting (2,1) is" << endl;
-		cout << "Number of Vertices = " << g.numberOfVertices() << endl;
-		cout << "Number of Edges = " << g.numberOfEdges() << endl;
-		cout << g << endl;
+		//g.eraseEdge(2, 1);
+		//cout << "The graph after deleting (2,1) is" << endl;
+		//cout << "Number of Vertices = " << g.numberOfVertices() << endl;
+		//cout << "Number of Edges = " << g.numberOfEdges() << endl;
+		//cout << g << endl;
 
-		cout << "existsEdge(3,1) = " << g.existsEdge(3, 1) << endl;
-		cout << "existsEdge(1,3) = " << g.existsEdge(1, 3) << endl;
-		cout << "inDegree(3) = " << g.inDegree(3) << endl;
-		cout << "outDegree(1) = " << g.outDegree(1) << endl;
-		cout << "Number of Vertices = " << g.numberOfVertices() << endl;
-		cout << "Number of Edges = " << g.numberOfEdges() << endl;
-		cout << endl;
+		//cout << "existsEdge(3,1) = " << g.existsEdge(3, 1) << endl;
+		//cout << "existsEdge(1,3) = " << g.existsEdge(1, 3) << endl;
+		//cout << "inDegree(3) = " << g.inDegree(3) << endl;
+		//cout << "outDegree(1) = " << g.outDegree(1) << endl;
+		//cout << "Number of Vertices = " << g.numberOfVertices() << endl;
+		//cout << "Number of Edges = " << g.numberOfEdges() << endl;
+		//cout << endl;
 
+		
 		// test iterator
 		//cout << "Edges incident to vertex 4" << endl;
-		//
+		//myIterator *g = g.iterator(5);
 		//vertexIterator<int>* gi = g.iterator(4);
 		//pair<int, int>* thePair;
 		//while ((thePair = gi->next()) != NULL)
 		//	cout << thePair->first << " " << thePair->second << endl;
+
+		int d[5] = { 0 };
+		int pi[5] = { 0 };
+		g.bfs(2, d, pi, 1);
+		for (int i = 0; i < 5; i++)
+			cout << i << ":  " << d[i] << endl;
+		for (int i = 0; i < 5; i++)
+			cout << i << ":  " << pi[i] << endl;
+
 	}
 	catch (const char* str)
 	{

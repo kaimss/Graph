@@ -1,9 +1,11 @@
 #pragma once
 #include"chain.h"
 #include"edge.h"
+#include"arrayQueue.h"
 #include <sstream>
 #include<iostream>
 using namespace std;
+
 template <class T>
 struct wEdge
 {// vertex and weight pair
@@ -28,6 +30,7 @@ private:
 	int n;                         // number of vertices
 	int e;                         // number of edges
 	chain<wEdge<T> > *aList;  // adjacency lists
+	
 public:
 	linkedWDigraph(int numberOfVertices = 0)
 	{// Constructor.
@@ -39,10 +42,9 @@ public:
 	}
 
 	~linkedWDigraph() { delete[] aList; }
-
 	int numberOfVertices() const { return n; }
-
 	int numberOfEdges() const { return e; }
+	
 
 	bool existsEdge(int i, int j) const
 	{// Return true iff (i,j) is an edge.
@@ -124,7 +126,14 @@ public:
 		return sum;
 	}
 
-	class myIterator
+
+
+
+	// iterators to start and end of list
+	class myIterator;
+	//myIterator begin() { return myIterator(firstNode); }
+	//myIterator end() { return myIterator(NULL); }
+	class myIterator 
 	{
 	public:
 		myIterator(chainNode<wEdge<T> > *theNode)
@@ -163,7 +172,9 @@ public:
 	myIterator* iterator(int theVertex)
 	{// Return iterator for vertex theVertex.
 		checkVertex(theVertex);
-		return new myIterator(aList[theVertex].firstNode); 
+		return new myIterator(aList[theVertex].getfirstNode()); 
+		//return new myIterator(aList[theVertex].firstNode);
+		
 	}
 
 
@@ -172,7 +183,41 @@ public:
 		for (int i = 1; i <= n; i++)
 			out << aList[i] << endl;
 	}
+
+	// 广度优先搜索 
+	void bfs(int v, int reach[], int processor[], int label)
+	{// Breadth-first search. reach[i] is set to label for
+	 // all vertices reachable from vertex v.
+		arrayQueue<int> q(10);
+		reach[v] = label;
+		q.push(v);
+		while (!q.empty())
+		{
+			// remove a labeled vertex from the queue
+			int w = q.front();
+			q.pop();
+
+
+			//myIterator i = iterator(w);
+			// mark all unreached vertices adjacent from w
+			myIterator *iw = iterator(w);
+			//vertexIterator<T> *iw = iterator(w);
+			int u;
+			while ((u = iw->next()) != 0)
+				// visit an adjacent vertex of w
+				if (reach[u] == 0)
+				{// u is an unreached vertex
+					q.push(u);
+					reach[u] = label; // mark reached
+					processor[u] = w;
+				}
+			delete iw;
+		}
+	}
+
+
 };
+
 // overload <<
 template <class T>
 ostream& operator<<(ostream& out, const linkedWDigraph<T>& x)

@@ -76,6 +76,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,6 +120,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="arrayQueue.h" />
     <ClInclude Include="chain.h" />
     <ClInclude Include="edge.h" />
     <ClInclude Include="linkedWDigraph.h" />
