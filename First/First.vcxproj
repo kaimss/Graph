@@ -123,7 +123,7 @@
     <ClInclude Include="chainNode.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="First.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

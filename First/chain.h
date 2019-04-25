@@ -85,7 +85,7 @@ void chain<T>::checkIndex(int theIndex)
 }
 
 template<class T>
-T& chain<T>::get(int theIndex) const
+T& chain<T>::get(int theIndex)
 {// Return element whose index is theIndex.
  // Throw illegalIndex exception if no such element.
 	checkIndex(theIndex);
