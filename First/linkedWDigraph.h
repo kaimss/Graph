@@ -15,6 +15,12 @@ struct wEdge
 	}
 	operator int() const { return vertex; }
 };
+// overload <<
+template <class T>
+ostream& operator<<(ostream& out, const wEdge<T>& x)
+{
+	out << x.vertex << " " << x.weight << " "; return out;
+}
 template <class T>
 class linkedWDigraph
 {
@@ -157,7 +163,7 @@ public:
 	myIterator* iterator(int theVertex)
 	{// Return iterator for vertex theVertex.
 		checkVertex(theVertex);
-		return new myIterator(aList[theVertex].firstNode);
+		return new myIterator(aList[theVertex].firstNode); 
 	}
 
 
@@ -167,3 +173,9 @@ public:
 			out << aList[i] << endl;
 	}
 };
+// overload <<
+template <class T>
+ostream& operator<<(ostream& out, const linkedWDigraph<T>& x)
+{
+	x.output(out); return out;
+}

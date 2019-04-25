@@ -15,8 +15,9 @@ public:
 	T& get(int theIndex);
 	int indexOf(const T& theElement) const;
 	void erase(int theIndex);
+	T* eraseElement(int theVertex);
 	void insert(int theIndex, const T& theElement);
-	//void output(ostream& out) const;
+	void output(ostream& out) const;
 
 private:
 	void checkIndex(int theIndex);
@@ -148,7 +149,36 @@ void chain<T>::erase(int theIndex)
 	listSize--;
 	delete deleteNode;
 }
+template<class T>
+T* chain<T>::eraseElement(int theVertex)
+{// Delete node with element == theVertex. Return pointer to
+ // deleted element. Return NULL if no matching element.
+	chainNode<T> *current = firstNode,
+		*trail = NULL; // one behind current
 
+					   // search for match
+	while (current != NULL && current->element != theVertex)
+	{
+		trail = current;
+		current = current->next;
+	}
+
+	if (current == NULL) // no match
+		return NULL;
+
+	// match found in node current
+	T* theElement = &current->element; // save matching element
+
+									   // remove current from chain
+	if (trail != NULL)
+		trail->next = current->next;
+	else
+		firstNode = current->next; // current is first node
+
+	delete current;
+	listSize--;
+	return theElement;
+}
 template<class T>
 void chain<T>::insert(int theIndex, const T& theElement)
 {// Insert theElement so that its index is theIndex.
@@ -172,4 +202,19 @@ void chain<T>::insert(int theIndex, const T& theElement)
 		p->next = new chainNode<T>(theElement, p->next);
 	}
 	listSize++;
+}
+template<class T>
+void chain<T>::output(ostream& out) const
+{// Put the list into the stream out.
+	for (chainNode<T>* currentNode = firstNode;
+		currentNode != NULL;
+		currentNode = currentNode->next)
+		out << currentNode->element << "  ";
+}
+
+// overload <<
+template <class T>
+ostream& operator<<(ostream& out, const chain<T>& x)
+{
+	x.output(out); return out;
 }
