@@ -2,6 +2,7 @@
 #include"chain.h"
 #include"edge.h"
 #include"arrayQueue.h"
+#include"arrayStack.h"
 #include <sstream>
 #include<iostream>
 using namespace std;
@@ -21,7 +22,7 @@ struct wEdge
 template <class T>
 ostream& operator<<(ostream& out, const wEdge<T>& x)
 {
-	out << x.vertex << " " << x.weight << " "; return out;
+	out << "(" << x.vertex << " " << x.weight << ") "; return out;
 }
 template <class T>
 class linkedWDigraph
@@ -181,7 +182,7 @@ public:
 	void output(ostream& out) const
 	{// Output the adjacency matrix.
 		for (int i = 1; i <= n; i++)
-			out << aList[i] << endl;
+			out << i << ": " << aList[i] << endl;
 	}
 
 	// 广度优先搜索 
@@ -214,7 +215,54 @@ public:
 			delete iw;
 		}
 	}
+	//拓扑排序 
+	bool topologicalOrder(int *theOrder)
+	{// 返回false当且仅当有向图没有拓扑序列 
+	 // 如果存在一个拓扑序列，将其赋给theOrder[0:n-1]
+	 // such an order exists. 
+	 // 确保这是一个有向图 
 
+		int n = numberOfVertices();
+
+		// 计算入度 
+		int *inDegree = new int[n + 1];
+		fill(inDegree + 1, inDegree + n + 1, 0);
+		for (int i = 1; i <= n; i++)
+		{// 顶点i的出边 
+			myIterator *ii = iterator(i);
+			//vertexIterator<T> *ii = iterator(i);
+			int u;
+			while ((u = ii->next()) != 0)
+				// 访问顶点i的一个邻接点 
+				inDegree[u]++;
+		}
+
+		// 把入度为0的顶点加入栈 
+		arrayStack<int> stack;
+		for (int i = 1; i <= n; i++)
+			if (inDegree[i] == 0)
+				stack.push(i);
+
+		// 生成拓扑序列 
+		int j = 0;  // 数组theOrder的索引 
+		while (!stack.empty())
+		{// 从栈中提取顶点 
+			int nextVertex = stack.top();
+			stack.pop();
+			theOrder[j++] = nextVertex;
+			// 更新入度
+			myIterator  *iNextVertex = iterator(nextVertex);
+			//vertexIterator<T> *iNextVertex = iterator(nextVertex);
+			int u;
+			while ((u = iNextVertex->next()) != 0)
+			{// 访问顶点nextVertex的下一个邻接顶点 
+				inDegree[u]--;
+				if (inDegree[u] == 0)
+					stack.push(u);
+			}
+		}
+		return (j == n);
+	}
 
 };
 

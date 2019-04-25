@@ -1,57 +1,72 @@
 #include"linkedWDigraph.h"
 #include<iostream>
 using namespace std;
-#define _CRT_SECURE_NO_WARNINGS
+#define v 6
 int main()
 {
 	try {
 		//linkedWDigraph<int> a(-5);
-		linkedWDigraph<int> g(4);
+		linkedWDigraph<int> g(v);
+		g.insertEdge(new edge<int>(1, 2, 1));
+		g.insertEdge(new edge<int>(2, 6, 1));
+		g.insertEdge(new edge<int>(6, 1, 1));
+		g.insertEdge(new edge<int>(3, 2, 1));
+		g.insertEdge(new edge<int>(3, 4, 1));
+		g.insertEdge(new edge<int>(4, 5, 1));
+		g.insertEdge(new edge<int>(5, 6, 1));
+		g.insertEdge(new edge<int>(5, 3, 1));
 		cout << "Number of Vertices = " << g.numberOfVertices() << endl;
-		cout << "Number of Edges = " << g.numberOfEdges() << endl;
 		cout << endl;
+		cout <<"before:\n" << g << endl;
 
-		g.insertEdge(new edge<int>(2, 4, 1));
-		g.insertEdge(new edge<int>(1, 3, 2));
-		g.insertEdge(new edge<int>(2, 1, 3));
-		g.insertEdge(new edge<int>(1, 4, 4));
-		g.insertEdge(new edge<int>(4, 2, 5));
-		//cout << "The graph is" << endl;
-		//cout << "Number of Vertices = " << g.numberOfVertices() << endl;
-		//cout << "Number of Edges = " << g.numberOfEdges() << endl;
-		//cout << g << endl;
-		//cout << endl;
 
-		//g.eraseEdge(2, 1);
-		//cout << "The graph after deleting (2,1) is" << endl;
-		//cout << "Number of Vertices = " << g.numberOfVertices() << endl;
-		//cout << "Number of Edges = " << g.numberOfEdges() << endl;
-		//cout << g << endl;
+		//寻找出度最大的点
+		int vv = 1;
+		int max = g.outDegree(vv);
+		for (int i = 1; i <= v; i++)
+		{
+			int tm = g.outDegree(i);
+			if (tm > max)
+			{
+				vv = i;
+				max = tm;
+			}
+		}
 
-		//cout << "existsEdge(3,1) = " << g.existsEdge(3, 1) << endl;
-		//cout << "existsEdge(1,3) = " << g.existsEdge(1, 3) << endl;
-		//cout << "inDegree(3) = " << g.inDegree(3) << endl;
-		//cout << "outDegree(1) = " << g.outDegree(1) << endl;
-		//cout << "Number of Vertices = " << g.numberOfVertices() << endl;
-		//cout << "Number of Edges = " << g.numberOfEdges() << endl;
-		//cout << endl;
 
-		
-		// test iterator
-		//cout << "Edges incident to vertex 4" << endl;
-		//myIterator *g = g.iterator(5);
-		//vertexIterator<int>* gi = g.iterator(4);
-		//pair<int, int>* thePair;
-		//while ((thePair = gi->next()) != NULL)
-		//	cout << thePair->first << " " << thePair->second << endl;
+		linkedWDigraph<int> gt(v);
+		int d[v + 1] = { 0 };
+		int pi[v + 1] = { 0 };
 
-		int d[5] = { 0 };
-		int pi[5] = { 0 };
-		g.bfs(2, d, pi, 1);
-		for (int i = 0; i < 5; i++)
-			cout << i << ":  " << d[i] << endl;
-		for (int i = 0; i < 5; i++)
-			cout << i << ":  " << pi[i] << endl;
+		//找到出度最大的点
+		g.bfs(vv, d, pi, 1);
+		for (int m = 1; m <= v; m++)
+		{
+			if (pi[m] != 0)
+			{
+				gt.insertEdge(new edge<int>(pi[m], m, 1));
+			}
+		}
+		for (int n = 1; n <= v; n++)
+			pi[n] = 0;
+
+		//操作剩余未到达的点
+		for (int i = 1; i <= v; i++)
+		{
+			g.bfs(i, d, pi, 1);
+			for (int m = 1; m <= v; m++)
+			{
+				if (pi[m] != 0)
+				{
+					gt.insertEdge(new edge<int>(pi[m], m, 1));
+				}
+			}
+			for (int n = 1; n <= v; n++)
+				pi[n] = 0;
+			
+		}
+		cout << "after:\n" << gt << endl;
+
 
 	}
 	catch (const char* str)

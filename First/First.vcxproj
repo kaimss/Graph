@@ -125,6 +125,8 @@
     <ClInclude Include="edge.h" />
     <ClInclude Include="linkedWDigraph.h" />
     <ClInclude Include="chainNode.h" />
+    <ClInclude Include="tree.h" />
+    <ClInclude Include="arrayStack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
