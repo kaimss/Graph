@@ -6,7 +6,14 @@
 #include <sstream>
 #include<iostream>
 using namespace std;
-
+struct vertex
+{
+	int pi;
+	int color;
+	int start = 0;
+	int finish = 0;
+	vertex(int pi, int color) { this->pi = pi; this->color = color; }
+};
 template <class T>
 struct wEdge
 {// vertex and weight pair
@@ -31,7 +38,21 @@ private:
 	int n;                         // number of vertices
 	int e;                         // number of edges
 	chain<wEdge<T> > *aList;  // adjacency lists
-	
+
+
+	int* reach;
+	int label;
+	void rDfs(int v)
+	{// Recursive dfs method.
+		reach[v] = label;
+		myIterator *iv = iterator(v);
+		int u;
+		while ((u = iv->next()) != 0)
+			// visit an adjacent vertex of v
+			if (reach[u] == 0)
+				rDfs(u);  // u is an unreached vertex
+		delete iv;
+	}
 public:
 	linkedWDigraph(int numberOfVertices = 0)
 	{// Constructor.
@@ -263,7 +284,42 @@ public:
 		}
 		return (j == n);
 	}
+	//深度优先搜索 
+	void dfs(int v, int reach[], int label)
+	{// Depth-first search. reach[i] is set to label for all
+	 // vertices reachable from vertex v
+		this->reach = reach;
+		this->label = label;
+		rDfs(v);
+	}
+	//寻找一条路径
+	//int* findPath(int theSource, int theDestination)
+	//{//  寻找一条从顶点theSource到顶点theDestination的路径 
+	// // 返回一个数组path，从索引1开始表示路径。path[0]表示路径长度 
+	// // 如果路径不存在，返回NULL 
+	// // 为寻找路径的递归算法初始化 
+	//	int n = numberOfVertices();
+	//	path = new int[n + 1];
+	//	path[1] = theSource;      // 第一个顶点
+	//	length = 1;               // 当前路径长度+1 
+	//	destination = theDestination;
+	//	reach = new int[n + 1];
+	//	for (int i = 1; i <= n; i++)
+	//		reach[i] = 0;
 
+	//	// 搜索路径 
+	//	if (theSource == theDestination || rFindPath(theSource))//rFindPath是寻找路径的实际算法 
+	//															// 找到一条路径 
+	//		path[0] = length - 1;
+	//	else
+	//	{
+	//		delete[] path;
+	//		path = NULL;
+	//	}
+
+	//	delete[] reach;
+	//	return path;
+	//}
 };
 
 // overload <<
