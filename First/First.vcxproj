@@ -119,6 +119,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="chain.h" />
+    <ClInclude Include="edge.h" />
     <ClInclude Include="linkedWDigraph.h" />
     <ClInclude Include="chainNode.h" />
   </ItemGroup>

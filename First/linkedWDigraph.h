@@ -1,6 +1,9 @@
 #pragma once
 #include"chain.h"
 #include"edge.h"
+#include <sstream>
+#include<iostream>
+using namespace std;
 template <class T>
 struct wEdge
 {// vertex and weight pair
@@ -34,10 +37,6 @@ public:
 	int numberOfVertices() const { return n; }
 
 	int numberOfEdges() const { return e; }
-
-	bool directed() const { return true; }
-
-	bool weighted() const { return true; }
 
 	bool existsEdge(int i, int j) const
 	{// Return true iff (i,j) is an edge.

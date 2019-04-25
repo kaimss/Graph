@@ -1,14 +1,16 @@
-#pragma once
+﻿#pragma once
+#include<iostream>
+using namespace std;
 template <class T>
 class edge
 {
 public:
-	weightedEdge() {};
-	weightedEdge(int theV1, int theV2, T theW)
+	edge() {};
+	edge(int theV1, int theV2, T theW)
 	{
 		v1 = theV1; v2 = theV2; w = theW;
 	}
-	~weightedEdge() {};
+	~edge() {};
 	int vertex1() const { return v1; }
 	int vertex2() const { return v2; }
 	T weight() const { return w; }

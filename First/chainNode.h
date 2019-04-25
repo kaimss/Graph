@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
 template<class T>
-struct chainchainNode
+struct chainNode
 {
 	T element;
 	chainNode<T> *next;

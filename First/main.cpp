@@ -1,9 +1,16 @@
-#include<iostream>
 #include"linkedWDigraph.h"
+#include<iostream>
 using namespace std;
 int main()
 {
-	linkedWDigraph<int> a(10);
+	try {
+		linkedWDigraph<int> a(-5);
+	}
+	catch (const char* str)
+	{
+		cout << str << endl;
+	}
+	
 
 
 

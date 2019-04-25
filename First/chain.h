@@ -1,5 +1,7 @@
-#pragma once
+﻿#pragma once
 #include"chainNode.h"
+#include<iostream>
+using namespace std;
 
 template<class T>
 class chain
