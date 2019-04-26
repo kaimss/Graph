@@ -17,6 +17,12 @@ struct vertex
 	vertex(){}
 	//vertex(int pi, int color) { this->pi = pi; this->color = color; }
 };
+// overload <<
+ostream& operator<<(ostream& out, const vertex& x)
+{
+	out << "color: " << x.color << "\tpi: " << x.pi << "\tstart: " << x.start << "\tfinish: " << x.finish;
+	return out;
+}
 template <class T>
 struct wEdge
 {// vertex and weight pair
@@ -51,8 +57,6 @@ private:
 	int t = 1;
 	void rDfs(int v)
 	{// Recursive dfs method.
-		//reach[v] = label;
-		//temp[v].label = label;
 		temp[v].color = 1;//置为灰色
 		temp[v].start = t;
 		myIterator *iv = iterator(v);
@@ -63,9 +67,9 @@ private:
 			if (temp[u].color == 0)//树边
 			{
 				cout << "(" << v << "," << u << ")是一条树边\n";
-				//iv->set(u, 0);
 				
 				temp[u].label = 1;
+				temp[u].pi = v;
 				t++;
 				rDfs(u);  // u is an unreached vertex
 			}
@@ -203,19 +207,7 @@ public:
 
 		~myIterator() {}
 
-		void set(int u, int categroy)
-		{
-			chainNode<wEdge<T> > *cNode = firstNode;
-			if (cNode == NULL)
-				return;
-			while (cNode->element.vertex != u)
-			{
-				cNode = cNode->next;
-			}
-			//cNode->element->category = category;
 
-			
-		}
 
 		int next()
 		{// Return next vertex if any. Return 0 if no next vertex.
@@ -259,11 +251,13 @@ public:
 	}
 
 	// 广度优先搜索 
-	void bfs(int v, int reach[], int processor[], int label)
+	void bfs(int v, vector<vertex> &temp)
 	{// Breadth-first search. reach[i] is set to label for
 	 // all vertices reachable from vertex v.
 		arrayQueue<int> q(10);
-		reach[v] = label;
+		t = 1;
+		temp[v].color = 2;
+		temp[v].start = temp[v].finish = t;
 		q.push(v);
 		while (!q.empty())
 		{
@@ -279,11 +273,13 @@ public:
 			int u;
 			while ((u = iw->next()) != 0)
 				// visit an adjacent vertex of w
-				if (reach[u] == 0)
+				if (temp[u].color == 0)
 				{// u is an unreached vertex
+					t++;
 					q.push(u);
-					reach[u] = label; // mark reached
-					processor[u] = w;
+					temp[u].color = 2; // mark reached
+					temp[u].pi = w;
+					temp[u].start = temp[u].finish = t;
 				}
 			delete iw;
 		}
@@ -337,12 +333,11 @@ public:
 		return (j == n);
 	}
 	//深度优先搜索 
-	void dfs(int v, vector<vertex> &temp, int label)
+	void dfs(int v, vector<vertex> &temp)
 	{// Depth-first search. reach[i] is set to label for all
 	 // vertices reachable from vertex v
 		cout << "从顶点" << v << "开始深度优先搜索\n";
 		this->temp = temp;
-		//this->label = label;
 		this->t = 1;
 		rDfs(v);
 		temp = this->temp;

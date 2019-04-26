@@ -20,7 +20,7 @@ public:
 	void output(ostream& out) const;
 	chainNode<T>* getfirstNode() { return firstNode; }
 
-
+	
 	// iterators to start and end of list
 	class iterator;
 	iterator begin() { return iterator(firstNode); }
