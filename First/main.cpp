@@ -26,11 +26,13 @@ int main()
 		linkedWDigraph<int> gt(v);
 		int d[v + 1] = { 0 };
 		int pi[v + 1] = { 0 };
-		//g.dfs(3, d, 1);
-		//for (int i = 1; i <= v; i++)
-		//	cout << d[i] << endl;
-		//for (int i = 1; i <= v; i++)
-		//	cout << pi[i] << endl;
+
+		vector<vertex> tmp(v + 1);
+		g.dfs(3, tmp, 1);
+		for (int i = 1; i <= v; i++)
+		{
+			cout << tmp[i].start << endl;
+		}
 		int gross = 0;
 		while (gross < v)
 		{

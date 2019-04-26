@@ -62,7 +62,7 @@ public:
 		{
 			return node == right.node;
 		}
-	protected:
+	private:
 		chainNode<T>* node;
 	};  // end of iterator class
 

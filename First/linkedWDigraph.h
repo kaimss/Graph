@@ -3,16 +3,18 @@
 #include"edge.h"
 #include"arrayQueue.h"
 #include"arrayStack.h"
+#include<vector>
 #include <sstream>
 #include<iostream>
 using namespace std;
 struct vertex
 {
-	int pi;
-	int color;
+	int label = 0;
+	int pi = 0;
 	int start = 0;
 	int finish = 0;
-	vertex(int pi, int color) { this->pi = pi; this->color = color; }
+	vertex(){}
+	//vertex(int pi, int color) { this->pi = pi; this->color = color; }
 };
 template <class T>
 struct wEdge
@@ -40,18 +42,27 @@ private:
 	chain<wEdge<T> > *aList;  // adjacency lists
 
 
-	int* reach;
+	vector<vertex> temp;
 	int label;
+	int t = 1;
 	void rDfs(int v)
 	{// Recursive dfs method.
-		reach[v] = label;
+		//reach[v] = label;
+		temp[v].label = label;
+		temp[v].start = t;
 		myIterator *iv = iterator(v);
 		int u;
 		while ((u = iv->next()) != 0)
 			// visit an adjacent vertex of v
-			if (reach[u] == 0)
+			if (temp[u].label == 0)
+			{
+				temp[u].label = 1;
+				t++;
 				rDfs(u);  // u is an unreached vertex
+			}
+				
 		delete iv;
+		temp[v].finish = t;
 	}
 public:
 	linkedWDigraph(int numberOfVertices = 0)
@@ -124,10 +135,7 @@ public:
 		}
 	}
 
-	int degree(int theVertex) const
-	{
-		throw "degree() undefined";
-	}
+
 
 	int outDegree(int theVertex) const
 	{// Return out-degree of vertex theVertex.
@@ -152,9 +160,6 @@ public:
 
 
 	// iterators to start and end of list
-	class myIterator;
-	//myIterator begin() { return myIterator(firstNode); }
-	//myIterator end() { return myIterator(NULL); }
 	class myIterator 
 	{
 	public:
@@ -187,7 +192,7 @@ public:
 			return nextVertex;
 		}
 
-	protected:
+	private:
 		chainNode<wEdge<T> > *currentNode;
 	};
 
@@ -195,7 +200,6 @@ public:
 	{// Return iterator for vertex theVertex.
 		checkVertex(theVertex);
 		return new myIterator(aList[theVertex].getfirstNode()); 
-		//return new myIterator(aList[theVertex].firstNode);
 		
 	}
 
@@ -220,7 +224,7 @@ public:
 			q.pop();
 
 
-			//myIterator i = iterator(w);
+			
 			// mark all unreached vertices adjacent from w
 			myIterator *iw = iterator(w);
 			//vertexIterator<T> *iw = iterator(w);
@@ -285,12 +289,14 @@ public:
 		return (j == n);
 	}
 	//深度优先搜索 
-	void dfs(int v, int reach[], int label)
+	void dfs(int v, vector<vertex> &temp, int label)
 	{// Depth-first search. reach[i] is set to label for all
 	 // vertices reachable from vertex v
-		this->reach = reach;
+		this->temp = temp;
 		this->label = label;
+		this->t = 1;
 		rDfs(v);
+		temp = this->temp;
 	}
 	//寻找一条路径
 	//int* findPath(int theSource, int theDestination)
