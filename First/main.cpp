@@ -28,46 +28,46 @@ int main()
 		int pi[v + 1] = { 0 };
 
 		vector<vertex> tmp(v + 1);
-		g.dfs(3, tmp, 1);
 		for (int i = 1; i <= v; i++)
 		{
-			cout << tmp[i].start << endl;
+			g.dfs(i, tmp, 1);
 		}
-		int gross = 0;
-		while (gross < v)
-		{
-			//寻找出度最大的点
-			int vv = 1;
-			int max = g.outDegree(vv);
-			for (int i = 1; i <= v; i++)
-			{
-				if (d[i] == 0)
-				{
-					int tm = g.outDegree(i);
-					if (tm > max)
-					{
-						vv = i;
-						max = tm;
-					}
-				}
+		cout << "after:\n" << g << endl;
+		//int gross = 0;
+		//while (gross < v)
+		//{
+		//	//寻找出度最大的点
+		//	int vv = 1;
+		//	int max = g.outDegree(vv);
+		//	for (int i = 1; i <= v; i++)
+		//	{
+		//		if (d[i] == 0)
+		//		{
+		//			int tm = g.outDegree(i);
+		//			if (tm > max)
+		//			{
+		//				vv = i;
+		//				max = tm;
+		//			}
+		//		}
 
-			}
+		//	}
 
-			gross++;
-			//对出度最大的点进行操作
-			g.bfs(vv, d, pi, 1);
-			for (int m = 1; m <= v; m++)
-			{
-				if (pi[m] != 0)
-				{
-					gt.insertEdge(new edge<int>(pi[m], m, 1));
-					gross++;
-				}
-			}
-			for (int n = 1; n <= v; n++)
-				pi[n] = 0;
-		}
-		cout << "after:\n" << gt << endl;
+		//	gross++;
+		//	//对出度最大的点进行操作
+		//	g.bfs(vv, d, pi, 1);
+		//	for (int m = 1; m <= v; m++)
+		//	{
+		//		if (pi[m] != 0)
+		//		{
+		//			gt.insertEdge(new edge<int>(pi[m], m, 1));
+		//			gross++;
+		//		}
+		//	}
+		//	for (int n = 1; n <= v; n++)
+		//		pi[n] = 0;
+		//}
+		//cout << "after:\n" << gt << endl;
 
 
 

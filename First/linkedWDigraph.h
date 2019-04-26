@@ -10,6 +10,7 @@ using namespace std;
 struct vertex
 {
 	int label = 0;
+	int color = 0;//0白色，1灰色，2黑色
 	int pi = 0;
 	int start = 0;
 	int finish = 0;
@@ -21,11 +22,14 @@ struct wEdge
 {// vertex and weight pair
 	int vertex;
 	T weight;
+	int category;//0树边，1前向边，2后向边，3横向边
+
 	wEdge(int theVertex = 0, T theWeight = 0)
 	{
 		vertex = theVertex; weight = theWeight;
 	}
 	operator int() const { return vertex; }
+
 };
 // overload <<
 template <class T>
@@ -48,21 +52,49 @@ private:
 	void rDfs(int v)
 	{// Recursive dfs method.
 		//reach[v] = label;
-		temp[v].label = label;
+		//temp[v].label = label;
+		temp[v].color = 1;//置为灰色
 		temp[v].start = t;
 		myIterator *iv = iterator(v);
 		int u;
 		while ((u = iv->next()) != 0)
+		{
 			// visit an adjacent vertex of v
-			if (temp[u].label == 0)
+			if (temp[u].color == 0)//树边
 			{
+				cout << "(" << v << "," << u << ")是一条树边\n";
+				//iv->set(u, 0);
+				
 				temp[u].label = 1;
 				t++;
 				rDfs(u);  // u is an unreached vertex
 			}
+			else if (temp[u].color == 1)//后向边
+			{
+				cout << "(" << v << "," << u << ")是一条后向边\n";
+				//iv->set(u, 2);
+				this->eraseEdge(v, u);
+			}
+			else if (temp[u].color == 2)//
+			{
+				if (temp[v].start > temp[u].start)//横向边
+				{
+					cout << "(" << v << "," << u << ")是一条横向边\n";
+					//iv->set(u, 3);
+				}
+				else if (temp[v].start < temp[u].start)//前向边
+				{
+					cout << "(" << v << "," << u << ")是一条前向边\n";
+					//iv->set(u, 2);
+					
+				}
+			}
+		}
+
 				
 		delete iv;
 		temp[v].finish = t;
+		temp[v].color = 2;//置为黑色
 	}
 public:
 	linkedWDigraph(int numberOfVertices = 0)
@@ -166,9 +198,24 @@ public:
 		myIterator(chainNode<wEdge<T> > *theNode)
 		{
 			currentNode = theNode;
+			firstNode = theNode;
 		}
 
 		~myIterator() {}
+
+		void set(int u, int categroy)
+		{
+			chainNode<wEdge<T> > *cNode = firstNode;
+			if (cNode == NULL)
+				return;
+			while (cNode->element.vertex != u)
+			{
+				cNode = cNode->next;
+			}
+			//cNode->element->category = category;
+
+			
+		}
 
 		int next()
 		{// Return next vertex if any. Return 0 if no next vertex.
@@ -193,6 +240,7 @@ public:
 		}
 
 	private:
+		chainNode<wEdge<T> > *firstNode;
 		chainNode<wEdge<T> > *currentNode;
 	};
 
@@ -292,8 +340,9 @@ public:
 	void dfs(int v, vector<vertex> &temp, int label)
 	{// Depth-first search. reach[i] is set to label for all
 	 // vertices reachable from vertex v
+		cout << "从顶点" << v << "开始深度优先搜索\n";
 		this->temp = temp;
-		this->label = label;
+		//this->label = label;
 		this->t = 1;
 		rDfs(v);
 		temp = this->temp;
