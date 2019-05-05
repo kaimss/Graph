@@ -70,14 +70,14 @@ void arrayQueue<T>::push(const T& theElement)
 		T* newQueue = new T[2 * arrayLength];
 
 		// copy elements into new array
-		int start = (theFront + 1) % arrayLength;
-		if (start < 2)
+		int discover = (theFront + 1) % arrayLength;
+		if (discover < 2)
 			// no wrap around
-			copy(queue + start, queue + start + arrayLength - 1, newQueue);
+			copy(queue + discover, queue + discover + arrayLength - 1, newQueue);
 		else
 		{  // queue wraps around
-			copy(queue + start, queue + arrayLength, newQueue);
-			copy(queue, queue + theBack + 1, newQueue + arrayLength - start);
+			copy(queue + discover, queue + arrayLength, newQueue);
+			copy(queue, queue + theBack + 1, newQueue + arrayLength - discover);
 		}
 
 		// switch to newQueue and set theFront and theBack

@@ -21,7 +21,7 @@ public:
 	chainNode<T>* getfirstNode() { return firstNode; }
 
 	
-	// iterators to start and end of list
+	// iterators to discover and end of list
 	class iterator;
 	iterator begin() { return iterator(firstNode); }
 	iterator end() { return iterator(NULL); }

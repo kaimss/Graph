@@ -9,18 +9,20 @@
 using namespace std;
 struct vertex
 {
-	int label = 0;
 	int color = 0;//0白色，1灰色，2黑色
 	int pi = 0;
-	int start = 0;
+	int discover = 0;
 	int finish = 0;
+	int low;
+	int child = 0;
+	bool root = false;
 	vertex(){}
 	//vertex(int pi, int color) { this->pi = pi; this->color = color; }
 };
 // overload <<
 ostream& operator<<(ostream& out, const vertex& x)
 {
-	out << "color: " << x.color << "\tpi: " << x.pi << "\tstart: " << x.start << "\tfinish: " << x.finish;
+	out << "color: " << x.color << "\tpi: " << x.pi << "\tdiscover: " << x.discover << "\tfinish: " << x.finish << "\tlow: " << x.low;
 	return out;
 }
 template <class T>
@@ -53,12 +55,11 @@ private:
 
 
 	vector<vertex> temp;
-	int label;
 	int t = 1;
-	void rDfs(int v)
+	void rDfs1(int v)
 	{// Recursive dfs method.
 		temp[v].color = 1;//置为灰色
-		temp[v].start = t;
+		temp[v].discover = t;
 		myIterator *iv = iterator(v);
 		int u;
 		while ((u = iv->next()) != 0)
@@ -68,34 +69,70 @@ private:
 			{
 				cout << "(" << v << "," << u << ")是一条树边\n";
 				
-				temp[u].label = 1;
 				temp[u].pi = v;
 				t++;
-				rDfs(u);  // u is an unreached vertex
+				rDfs1(u);  // u is an unreached vertex
 			}
 			else if (temp[u].color == 1)//后向边
 			{
 				cout << "(" << v << "," << u << ")是一条后向边\n";
-				//iv->set(u, 2);
 				this->eraseEdge(v, u);
 			}
 			else if (temp[u].color == 2)//
 			{
-				if (temp[v].start > temp[u].start)//横向边
+				if (temp[v].discover > temp[u].discover)//横向边
 				{
 					cout << "(" << v << "," << u << ")是一条横向边\n";
-					//iv->set(u, 3);
 				}
-				else if (temp[v].start < temp[u].start)//前向边
+				else if (temp[v].discover < temp[u].discover)//前向边
 				{
 					cout << "(" << v << "," << u << ")是一条前向边\n";
-					//iv->set(u, 2);
 					
 				}
 			}
 		}
 
 				
+		delete iv;
+		temp[v].finish = t;
+		temp[v].color = 2;//置为黑色
+	}
+	void rDfs2(int v)
+	{// Recursive dfs method.
+		temp[v].color = 1;//置为灰色
+		temp[v].discover = t;
+		temp[v].low = t;
+		myIterator *iv = iterator(v);
+		int u;
+		while ((u = iv->next()) != 0)
+		{
+			// visit an adjacent vertex of v
+			if (temp[u].color == 0)//树边
+			{
+				cout << "(" << v << "," << u << ")是一条树边\n";
+
+				temp[v].child++;
+				temp[u].pi = v;
+				t++;
+				rDfs2(u);  // u is an unreached vertex
+				if (temp[u].low < temp[v].low)
+					temp[v].low = temp[u].low;
+
+				if (!temp[v].root && temp[u].low >= temp[v].discover)
+					cout << v << "是割点\n";
+				else if (temp[v].root && temp[v].child >= 2)
+					cout << v << "是割点\n";
+			}
+			else if (temp[v].pi != u && temp[u].color == 1)//后向边
+			{
+				cout << "(" << v << "," << u << ")是一条后向边\n";
+				temp[v].low = temp[u].discover;
+				/*if (temp[u].discover < temp[v].low)
+					temp[v].low = temp[u].discover;*/
+			}
+		}
+
+
 		delete iv;
 		temp[v].finish = t;
 		temp[v].color = 2;//置为黑色
@@ -195,7 +232,7 @@ public:
 
 
 
-	// iterators to start and end of list
+	// iterators to discover and end of list
 	class myIterator 
 	{
 	public:
@@ -257,7 +294,7 @@ public:
 		arrayQueue<int> q(10);
 		t = 1;
 		temp[v].color = 2;
-		temp[v].start = temp[v].finish = t;
+		temp[v].discover = temp[v].finish = t;
 		q.push(v);
 		while (!q.empty())
 		{
@@ -279,7 +316,7 @@ public:
 					q.push(u);
 					temp[u].color = 2; // mark reached
 					temp[u].pi = w;
-					temp[u].start = temp[u].finish = t;
+					temp[u].discover = temp[u].finish = t;
 				}
 			delete iw;
 		}
@@ -333,13 +370,25 @@ public:
 		return (j == n);
 	}
 	//深度优先搜索 
-	void dfs(int v, vector<vertex> &temp)
+	void dfs1(int v, vector<vertex> &temp)
 	{// Depth-first search. reach[i] is set to label for all
 	 // vertices reachable from vertex v
 		cout << "从顶点" << v << "开始深度优先搜索\n";
 		this->temp = temp;
 		this->t = 1;
-		rDfs(v);
+		this->temp[v].root = true;
+		rDfs1(v);
+		temp = this->temp;
+	}
+	//深度优先搜索 
+	void dfs2(int v, vector<vertex> &temp)
+	{// Depth-first search. reach[i] is set to label for all
+	 // vertices reachable from vertex v
+		cout << "从顶点" << v << "开始深度优先搜索\n";
+		this->temp = temp;
+		this->t = 1;
+		this->temp[v].root = true;
+		rDfs2(v);
 		temp = this->temp;
 	}
 	//寻找一条路径
