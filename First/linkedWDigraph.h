@@ -10,12 +10,13 @@ using namespace std;
 struct vertex
 {
 	int color = 0;//0白色，1灰色，2黑色
-	int pi = 0;
-	int discover = 0;
-	int finish = 0;
-	int low;
-	int child = 0;
-	bool root = false;
+	int pi = 0;//初始前驱不存在
+	int discover = 0;//初始发现时间
+	int finish = 0;//初始结束时间
+	int low;//
+	int child = 0;//初始孩子数目
+	bool root = false;//是否为根节点
+	int distance = 1000;//初始距离正无穷
 	vertex(){}
 	//vertex(int pi, int color) { this->pi = pi; this->color = color; }
 };
@@ -30,7 +31,7 @@ struct wEdge
 {// vertex and weight pair
 	int vertex;
 	T weight;
-	int category;//0树边，1前向边，2后向边，3横向边
+	//int category;//0树边，1前向边，2后向边，3横向边
 
 	wEdge(int theVertex = 0, T theWeight = 0)
 	{
@@ -56,6 +57,7 @@ private:
 
 	vector<vertex> temp;
 	int t = 1;
+
 	void rDfs1(int v)
 	{// Recursive dfs method.
 		temp[v].color = 1;//置为灰色
@@ -68,7 +70,6 @@ private:
 			if (temp[u].color == 0)//树边
 			{
 				cout << "(" << v << "," << u << ")是一条树边\n";
-				
 				temp[u].pi = v;
 				t++;
 				rDfs1(u);  // u is an unreached vertex
@@ -106,10 +107,8 @@ private:
 		int u;
 		while ((u = iv->next()) != 0)
 		{
-			// visit an adjacent vertex of v
 			if (temp[u].color == 0)//树边
 			{
-				cout << "(" << v << "," << u << ")是一条树边\n";
 
 				temp[v].child++;
 				temp[u].pi = v;
@@ -119,16 +118,13 @@ private:
 					temp[v].low = temp[u].low;
 
 				if (!temp[v].root && temp[u].low >= temp[v].discover)
-					cout << v << "是割点\n";
+					cout << "结点 " << v << " 是割点\n";
 				else if (temp[v].root && temp[v].child >= 2)
-					cout << v << "是割点\n";
+					cout << "结点 " << v << " 是割点\n";
 			}
 			else if (temp[v].pi != u && temp[u].color == 1)//后向边
 			{
-				cout << "(" << v << "," << u << ")是一条后向边\n";
 				temp[v].low = temp[u].discover;
-				/*if (temp[u].discover < temp[v].low)
-					temp[v].low = temp[u].discover;*/
 			}
 		}
 
@@ -136,6 +132,41 @@ private:
 		delete iv;
 		temp[v].finish = t;
 		temp[v].color = 2;//置为黑色
+	}
+	int rDfs3(int v)
+	{// Recursive dfs method.
+		temp[v].color = 1;//置为灰色
+		temp[v].discover = t;
+		temp[v].low = t;
+		myIterator *iv = iterator(v);
+		int u;
+		while ((u = iv->next()) != 0)
+		{
+			// visit an adjacent vertex of v
+			if (temp[u].color == 0)//树边
+			{
+				cout << "(" << v << "," << u << ")是一条树边\n";
+
+				temp[v].child++;
+				temp[u].pi = v;
+				t++;
+				int t = rDfs3(u);
+				if (t != 0)
+					return t; 
+			}
+			else if (temp[v].pi != u && temp[u].color == 1)//后向边
+			{
+				cout << "(" << v << "," << u << ")是一条后向边\n";
+				temp[u].pi = v;
+				return u;
+			}
+		}
+
+
+		delete iv;
+		temp[v].finish = t;
+		temp[v].color = 2;//置为黑色
+		return 0;
 	}
 public:
 	linkedWDigraph(int numberOfVertices = 0)
@@ -159,6 +190,21 @@ public:
 			return false;
 		else
 			return true;
+	}
+	edge<T> getEdge(int i, int j)
+	{
+		if (existsEdge(i, j))
+		{
+			int index = aList[i].indexOf(wEdge<T>(j));
+			wEdge<T> element = aList[i].get(index);
+			edge<T> temp(i, j, element.weight);
+			return temp;
+		}
+		else
+		{
+			edge<T> temp(0, 0, 0);
+			return temp;
+		}
 	}
 
 	void insertEdge(edge<T> *theEdge)
@@ -287,6 +333,261 @@ public:
 			out << i << ": " << aList[i] << endl;
 	}
 
+	//局部替换最小生成树算法
+	void particalExchange(linkedWDigraph<T>& tar)
+	{
+		int tarn = tar.numberOfVertices();
+		for (int v = 1; v <= tarn; v++)
+		{
+			cout << "\n扫描" << v << "的邻接链表\n";
+			myIterator *iv = iterator(v);
+			int u;
+			while ((u = iv->next()) != 0)
+			{
+				//int index = aList[v].indexOf(wEdge<T>(u));
+				//wEdge<T> element = aList[v].get(index);
+				////cout << element;
+				//edge<T> temp(v, u, element.weight);
+				if (u > v)
+				{
+					edge<T> temp = getEdge(v, u);
+					edge<T> temp2 = getEdge(u, v);
+					cout << "尝试添加边" << temp << endl;
+					tar.insertEdge(&temp);
+					tar.insertEdge(&temp2);
+					tar.exchange(temp.vertex1());
+					cout << "当前图：\n" << tar;
+				}
+				
+			}
+
+
+			delete iv;
+			cout << "\n";
+		}
+		
+	}
+
+	void exchange(int vo)
+	{
+		vector<vertex> temp(n + 1);
+		int tu = dfs3(vo, temp);
+		if (tu != 0)
+		{
+
+			int v = temp[tu].pi;
+			int u = tu;
+
+			edge<T> tedge = getEdge(v, u);
+			int weight = tedge.weight();
+
+			cout << u ;
+			int maxv = v, maxu = u;
+			while (v != tu)
+			{
+				u = v;
+				v = temp[u].pi;
+				tedge = getEdge(v, u);
+				if (tedge.weight() > weight)
+				{
+					weight = tedge.weight();
+					maxv = v;
+					maxu = u;
+				}
+				cout <<  " ---> " << u  ;
+
+			}
+			cout << " ---> " << tu <<" 形成环\n";
+			eraseEdge(maxu, maxv);
+			eraseEdge(maxv, maxu);
+			
+			cout << "(" << maxv << "," << maxu << ")" << "需要删去\n";
+		}
+		else
+		{
+			cout << "成功添加边\n";
+		}
+		
+		
+	}
+
+
+	//Bellman-Ford算法
+	int bellmanFord(int s, vector<vertex> &temp)
+	{
+		//初始化
+		for (int i = 1; i <= n; i++)
+		{
+			temp[i].distance = 1000;
+			temp[i].pi = 0;
+		}
+		temp[s].distance = 0;
+
+		//v-1次松弛操作
+		for (int i = 1; i < n; i++)
+		{
+
+			for (int v = 1; v <= n; v++)
+			{
+				chainNode<wEdge<T> > *firstNode = aList[v].getfirstNode();
+				chainNode<wEdge<T> > *currentNode = firstNode;
+				while (currentNode != NULL)
+				{
+					int u = currentNode->element.vertex;
+					int w = currentNode->element.weight;
+					cout <<"操作边 " << v << "," << u << "    " ;
+
+					if (temp[v].distance != 1000 && temp[u].distance > temp[v].distance + w)
+					{
+						cout << temp[u].distance <<" --->" << temp[v].distance + w;
+						temp[u].distance = temp[v].distance + w;
+						temp[u].pi = v;
+						cout << "  前驱结点  " << v << endl;
+					}
+					else
+					{
+						cout << "不需要更新\n";
+					}
+					
+					currentNode = currentNode->next;
+				}
+			}
+			cout << endl;
+
+		}
+
+		//对每个边进行松弛，如果可以松弛则有负环
+		for (int v = 1; v <= n; v++)
+		{
+			chainNode<wEdge<T> > *firstNode = aList[v].getfirstNode();
+			chainNode<wEdge<T> > *currentNode = firstNode;
+			while (currentNode != NULL)
+			{
+				int u = currentNode->element.vertex;
+				int w = currentNode->element.weight;
+
+				if (temp[u].distance > temp[v].distance + w)
+				{
+					return u;
+				}
+
+				currentNode = currentNode->next;
+			}
+		}
+		return 0;
+
+
+
+	}
+
+	//通过Bellman-Ford算法找负环
+	void negCircle()
+	{
+		vector<vertex> tmp(n + 1);
+		vector<int> que;
+		int flag = bellmanFord(1, tmp);
+		if (flag == 0)
+			cout << "success\n";
+		else
+		{
+			int index = -1;
+			do
+			{
+				que.push_back(flag);
+				cout << flag << "\t";
+				flag = tmp[flag].pi;
+				if ((index = com(flag, que)) != -1)
+				{
+					que.push_back(flag);
+					break;
+				}
+			} while (1);
+
+
+			cout << "\npath  ";
+			for (int i = que.size() - 1; i >= index; i--)
+			{
+				cout << que[i] << "  ";
+			}
+
+		}
+
+		cout << endl;
+	}
+
+	//动态规划解数据量小的TPS问题
+	T dynamic_TPS(int source, int v, vector<int> S, vector<int> &path)
+	{
+		cout << "从点" << v << "开始，从集合{";
+		for (int i = 0; i < S.size(); i++)
+		{
+			cout << S[i];
+			if (i != S.size() - 1)
+			{
+				cout << ",";
+			}
+		}
+		cout << "}开始扫描\n";
+
+		if (S.size() == 1)
+		{
+			//path.insert(path.begin(), S[0]);
+			path.push_back(S[0]);
+			path.push_back(source);
+			cout << "从点" << v << "开始，从集合{"<<S[0]<<"}扫描结束  ";
+			cout << "最短路径为" << v << "," << S[0] << "," << source << "  ";
+			cout << "  长度为" << getEdge(v, S[0]).weight() + getEdge(S[0], source) << endl;
+			return getEdge(v, S[0]).weight() + getEdge(S[0], source);
+		}
+		vector<vector<int> > tpath(S.size());
+		vector<int> St = S;
+		St.erase(St.begin() + 0);
+		T min = getEdge(v, S[0]).weight() + dynamic_TPS(source, S[0], St, tpath[0]);
+		St = S;
+		int minindex = 0;
+		for (int i = 1; i < S.size(); i++)
+		{
+			St.erase(St.begin() + i);
+			T temp = getEdge(v, S[i]).weight() + dynamic_TPS(source, S[i], St, tpath[i]);
+			St = S;
+			if (temp < min)
+			{
+				minindex = i;
+				min = temp;
+			}
+		}
+
+		tpath[minindex].insert(tpath[minindex].begin(), S[minindex]);
+
+		cout << "从点" << v << "开始，从集合{";
+		for (int i = 0; i < S.size(); i++)
+		{
+			cout << S[i];
+			if (i != S.size() - 1)
+			{
+				cout << ",";
+			}
+		}
+		cout << "}扫描结束  ";
+		cout << "最短路径为" << v << ",";
+		for (int i = 0; i < tpath[minindex].size(); i++)
+		{
+			cout << tpath[minindex][i];
+			if (i != tpath[minindex].size() - 1)
+			{
+				cout << ",";
+			}
+		}
+		cout << "  长度为" << min << endl;
+		if (v == source)
+		{
+			tpath[minindex].insert(tpath[minindex].begin(), source);
+		}
+		path = tpath[minindex];
+		return min;
+
+	}
+
 	// 广度优先搜索 
 	void bfs(int v, vector<vertex> &temp)
 	{// Breadth-first search. reach[i] is set to label for
@@ -382,43 +683,26 @@ public:
 	}
 	//深度优先搜索 
 	void dfs2(int v, vector<vertex> &temp)
-	{// Depth-first search. reach[i] is set to label for all
-	 // vertices reachable from vertex v
-		cout << "从顶点" << v << "开始深度优先搜索\n";
+	{
 		this->temp = temp;
 		this->t = 1;
 		this->temp[v].root = true;
 		rDfs2(v);
 		temp = this->temp;
 	}
-	//寻找一条路径
-	//int* findPath(int theSource, int theDestination)
-	//{//  寻找一条从顶点theSource到顶点theDestination的路径 
-	// // 返回一个数组path，从索引1开始表示路径。path[0]表示路径长度 
-	// // 如果路径不存在，返回NULL 
-	// // 为寻找路径的递归算法初始化 
-	//	int n = numberOfVertices();
-	//	path = new int[n + 1];
-	//	path[1] = theSource;      // 第一个顶点
-	//	length = 1;               // 当前路径长度+1 
-	//	destination = theDestination;
-	//	reach = new int[n + 1];
-	//	for (int i = 1; i <= n; i++)
-	//		reach[i] = 0;
+	//深度优先搜索 
+	int dfs3(int v, vector<vertex> &temp)
+	{// Depth-first search. reach[i] is set to label for all
+	 // vertices reachable from vertex v
+		cout << "从顶点" << v << "开始深度优先搜索\n";
+		this->temp = temp;
+		this->t = 1;
+		this->temp[v].root = true;
+		int h = rDfs3(v);
+		temp = this->temp;
+		return h;
+	}
 
-	//	// 搜索路径 
-	//	if (theSource == theDestination || rFindPath(theSource))//rFindPath是寻找路径的实际算法 
-	//															// 找到一条路径 
-	//		path[0] = length - 1;
-	//	else
-	//	{
-	//		delete[] path;
-	//		path = NULL;
-	//	}
-
-	//	delete[] reach;
-	//	return path;
-	//}
 };
 
 // overload <<

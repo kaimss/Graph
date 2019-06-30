@@ -25,3 +25,10 @@ private:
 		v2;
 	T w;
 };
+// overload <<
+template <class T>
+ostream& operator<<(ostream& out, const edge<T>& x)
+{
+	x.output(out);
+	return out;
+}

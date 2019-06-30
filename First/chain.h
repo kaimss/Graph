@@ -128,6 +128,7 @@ void chain<T>::checkIndex(int theIndex)
 {// Verify that theIndex is between 0 and listSize - 1.
 	if (theIndex < 0 || theIndex >= listSize)
 	{
+		ostringstream s;
 		s << "index = " << theIndex << " size = " << listSize;
 		throw s.str();
 	}
