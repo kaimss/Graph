@@ -1,21 +1,15 @@
-#include"linkedWDigraph.h"
-#include<iostream>
-#include<vector>
+#include "linkedWDigraph.h"
+#include <iostream>
+#include <vector>
 using namespace std;
 #define v 6
+
 template<class T>
-int com(T a, vector<T> b)
-{
-	for (int i = 0; i < b.size(); i++)
-	{
-		if (b[i] == a)
-			return i;
-	}
-	return -1;
-}
+int com(T a, vector<T> b);
+
 int main()
 {
-	/*//ÊµÑéÒ»
+	/*//å®éªŒä¸€
 	try {
 		
 		linkedWDigraph<int> g(v);
@@ -39,7 +33,7 @@ int main()
 		cout << "after:\n" << g << endl;
 		for (int i = 1; i <= v; i++)
 		{
-			cout << "½Úµã" << i << "\n" << tmp[i] << endl;
+			cout << "èŠ‚ç‚¹" << i << "\n" << tmp[i] << endl;
 		}
 	}
 	catch (const char* str)
@@ -47,7 +41,7 @@ int main()
 		cout << str << endl;
 	}*/
 	
-	//ÊµÑé¶ş
+	//å®éªŒäºŒ
 	try {
 
 		linkedWDigraph<int> g(v);
@@ -67,7 +61,7 @@ int main()
 
 		//cout << "Number of Vertices = " << g.numberOfVertices() << endl;
 		//cout << endl;
-		cout << "Í¼µÄÁÚ½ÓÁ´±í±íÊ¾:\n" << g << endl;
+		cout << "å›¾çš„é‚»æ¥é“¾è¡¨è¡¨ç¤º:\n" << g << endl;
 
 		vector<vertex> tmp(v + 1);
 		g.dfs2(1, tmp);
@@ -76,7 +70,7 @@ int main()
 		//cout << "after:\n" << g << endl;
 		/*for (int i = 1; i <= v; i++)
 		{
-			cout << "½Úµã" << i << "\n" << tmp[i] << endl;
+			cout << "èŠ‚ç‚¹" << i << "\n" << tmp[i] << endl;
 		}*/
 	}
 	catch (const char* str)
@@ -84,7 +78,7 @@ int main()
 		cout << str << endl;
 	}
 
-	//ÊµÑéÈı
+	//å®éªŒä¸‰
 	//try {
 
 	//	linkedWDigraph<int> g(v);
@@ -123,7 +117,7 @@ int main()
 	//}
 
 
-	//ÊµÑéËÄ
+	//å®éªŒå››
 	//try {
 
 	//	linkedWDigraph<int> g(v);
@@ -155,7 +149,7 @@ int main()
 	//}
 
 
-	//ÊµÑéÎå
+	//å®éªŒäº”
 	//try {
 	//	//v=5
 	//	linkedWDigraph<int> g(v);
@@ -178,10 +172,10 @@ int main()
 	//	cout << "before:\n" << g << endl;
 
 	//	int arr[5] = { 1, 2, 3, 4, 5 };
-	//	vector<int> vec(arr + 1, arr + 5);      //½«arrÊı×éµÄÔªËØÓÃÓÚ³õÊ¼»¯vecÏòÁ¿
+	//	vector<int> vec(arr + 1, arr + 5);      //å°†arræ•°ç»„çš„å…ƒç´ ç”¨äºåˆå§‹åŒ–vecå‘é‡
 	//	vector<int> path(5, 0);
-	//	cout <<"\n×îÖÕ£¬³¤¶ÈÎª" << g.dynamic_TPS(1, 1, vec, path) << endl;
-	//	cout << "Â·¾¶Îª";
+	//	cout <<"\næœ€ç»ˆï¼Œé•¿åº¦ä¸º" << g.dynamic_TPS(1, 1, vec, path) << endl;
+	//	cout << "è·¯å¾„ä¸º";
 	//	
 	//	for (int i = 0; i < path.size(); i++)
 	//	{

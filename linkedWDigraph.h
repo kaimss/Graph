@@ -1,25 +1,35 @@
 #pragma once
-#include"chain.h"
-#include"edge.h"
-#include"arrayQueue.h"
-#include"arrayStack.h"
-#include<vector>
+#include "chain.h"
+#include "edge.h"
+#include "arrayQueue.h"
+#include "arrayStack.h"
+#include <vector>
 #include <sstream>
-#include<iostream>
+#include <iostream>
 using namespace std;
 struct vertex
 {
-	int color = 0;//0°×É«£¬1»ÒÉ«£¬2ºÚÉ«
-	int pi = 0;//³õÊ¼Ç°Çı²»´æÔÚ
-	int discover = 0;//³õÊ¼·¢ÏÖÊ±¼ä
-	int finish = 0;//³õÊ¼½áÊøÊ±¼ä
+	int color = 0;//0ç™½è‰²ï¼Œ1ç°è‰²ï¼Œ2é»‘è‰²
+	int pi = 0;//åˆå§‹å‰é©±ä¸å­˜åœ¨
+	int discover = 0;//åˆå§‹å‘ç°æ—¶é—´
+	int finish = 0;//åˆå§‹ç»“æŸæ—¶é—´
 	int low;//
-	int child = 0;//³õÊ¼º¢×ÓÊıÄ¿
-	bool root = false;//ÊÇ·ñÎª¸ù½Úµã
-	int distance = 1000;//³õÊ¼¾àÀëÕıÎŞÇî
+	int child = 0;//åˆå§‹å­©å­æ•°ç›®
+	bool root = false;//æ˜¯å¦ä¸ºæ ¹èŠ‚ç‚¹
+	int distance = 1000;//åˆå§‹è·ç¦»æ­£æ— ç©·
 	vertex(){}
 	//vertex(int pi, int color) { this->pi = pi; this->color = color; }
 };
+template<class T>
+int com(T a, vector<T> b)
+{
+    for (int i = 0; i < b.size(); i++)
+    {
+        if (b[i] == a)
+            return i;
+    }
+    return -1;
+}
 // overload <<
 ostream& operator<<(ostream& out, const vertex& x)
 {
@@ -31,7 +41,7 @@ struct wEdge
 {// vertex and weight pair
 	int vertex;
 	T weight;
-	//int category;//0Ê÷±ß£¬1Ç°Ïò±ß£¬2ºóÏò±ß£¬3ºáÏò±ß
+	//int category;//0æ ‘è¾¹ï¼Œ1å‰å‘è¾¹ï¼Œ2åå‘è¾¹ï¼Œ3æ¨ªå‘è¾¹
 
 	wEdge(int theVertex = 0, T theWeight = 0)
 	{
@@ -60,34 +70,34 @@ private:
 
 	void rDfs1(int v)
 	{// Recursive dfs method.
-		temp[v].color = 1;//ÖÃÎª»ÒÉ«
+		temp[v].color = 1;//ç½®ä¸ºç°è‰²
 		temp[v].discover = t;
 		myIterator *iv = iterator(v);
 		int u;
 		while ((u = iv->next()) != 0)
 		{
 			// visit an adjacent vertex of v
-			if (temp[u].color == 0)//Ê÷±ß
+			if (temp[u].color == 0)//æ ‘è¾¹
 			{
-				cout << "(" << v << "," << u << ")ÊÇÒ»ÌõÊ÷±ß\n";
+				cout << "(" << v << "," << u << ")æ˜¯ä¸€æ¡æ ‘è¾¹\n";
 				temp[u].pi = v;
 				t++;
 				rDfs1(u);  // u is an unreached vertex
 			}
-			else if (temp[u].color == 1)//ºóÏò±ß
+			else if (temp[u].color == 1)//åå‘è¾¹
 			{
-				cout << "(" << v << "," << u << ")ÊÇÒ»ÌõºóÏò±ß\n";
+				cout << "(" << v << "," << u << ")æ˜¯ä¸€æ¡åå‘è¾¹\n";
 				this->eraseEdge(v, u);
 			}
 			else if (temp[u].color == 2)//
 			{
-				if (temp[v].discover > temp[u].discover)//ºáÏò±ß
+				if (temp[v].discover > temp[u].discover)//æ¨ªå‘è¾¹
 				{
-					cout << "(" << v << "," << u << ")ÊÇÒ»ÌõºáÏò±ß\n";
+					cout << "(" << v << "," << u << ")æ˜¯ä¸€æ¡æ¨ªå‘è¾¹\n";
 				}
-				else if (temp[v].discover < temp[u].discover)//Ç°Ïò±ß
+				else if (temp[v].discover < temp[u].discover)//å‰å‘è¾¹
 				{
-					cout << "(" << v << "," << u << ")ÊÇÒ»ÌõÇ°Ïò±ß\n";
+					cout << "(" << v << "," << u << ")æ˜¯ä¸€æ¡å‰å‘è¾¹\n";
 					
 				}
 			}
@@ -96,18 +106,18 @@ private:
 				
 		delete iv;
 		temp[v].finish = t;
-		temp[v].color = 2;//ÖÃÎªºÚÉ«
+		temp[v].color = 2;//ç½®ä¸ºé»‘è‰²
 	}
 	void rDfs2(int v)
 	{// Recursive dfs method.
-		temp[v].color = 1;//ÖÃÎª»ÒÉ«
+		temp[v].color = 1;//ç½®ä¸ºç°è‰²
 		temp[v].discover = t;
 		temp[v].low = t;
 		myIterator *iv = iterator(v);
 		int u;
 		while ((u = iv->next()) != 0)
 		{
-			if (temp[u].color == 0)//Ê÷±ß
+			if (temp[u].color == 0)//æ ‘è¾¹
 			{
 
 				temp[v].child++;
@@ -118,11 +128,11 @@ private:
 					temp[v].low = temp[u].low;
 
 				if (!temp[v].root && temp[u].low >= temp[v].discover)
-					cout << "½áµã " << v << " ÊÇ¸îµã\n";
+					cout << "ç»“ç‚¹ " << v << " æ˜¯å‰²ç‚¹\n";
 				else if (temp[v].root && temp[v].child >= 2)
-					cout << "½áµã " << v << " ÊÇ¸îµã\n";
+					cout << "ç»“ç‚¹ " << v << " æ˜¯å‰²ç‚¹\n";
 			}
-			else if (temp[v].pi != u && temp[u].color == 1)//ºóÏò±ß
+			else if (temp[v].pi != u && temp[u].color == 1)//åå‘è¾¹
 			{
 				temp[v].low = temp[u].discover;
 			}
@@ -131,11 +141,11 @@ private:
 
 		delete iv;
 		temp[v].finish = t;
-		temp[v].color = 2;//ÖÃÎªºÚÉ«
+		temp[v].color = 2;//ç½®ä¸ºé»‘è‰²
 	}
 	int rDfs3(int v)
 	{// Recursive dfs method.
-		temp[v].color = 1;//ÖÃÎª»ÒÉ«
+		temp[v].color = 1;//ç½®ä¸ºç°è‰²
 		temp[v].discover = t;
 		temp[v].low = t;
 		myIterator *iv = iterator(v);
@@ -143,9 +153,9 @@ private:
 		while ((u = iv->next()) != 0)
 		{
 			// visit an adjacent vertex of v
-			if (temp[u].color == 0)//Ê÷±ß
+			if (temp[u].color == 0)//æ ‘è¾¹
 			{
-				cout << "(" << v << "," << u << ")ÊÇÒ»ÌõÊ÷±ß\n";
+				cout << "(" << v << "," << u << ")æ˜¯ä¸€æ¡æ ‘è¾¹\n";
 
 				temp[v].child++;
 				temp[u].pi = v;
@@ -154,9 +164,9 @@ private:
 				if (t != 0)
 					return t; 
 			}
-			else if (temp[v].pi != u && temp[u].color == 1)//ºóÏò±ß
+			else if (temp[v].pi != u && temp[u].color == 1)//åå‘è¾¹
 			{
-				cout << "(" << v << "," << u << ")ÊÇÒ»ÌõºóÏò±ß\n";
+				cout << "(" << v << "," << u << ")æ˜¯ä¸€æ¡åå‘è¾¹\n";
 				temp[u].pi = v;
 				return u;
 			}
@@ -165,7 +175,7 @@ private:
 
 		delete iv;
 		temp[v].finish = t;
-		temp[v].color = 2;//ÖÃÎªºÚÉ«
+		temp[v].color = 2;//ç½®ä¸ºé»‘è‰²
 		return 0;
 	}
 public:
@@ -333,13 +343,13 @@ public:
 			out << i << ": " << aList[i] << endl;
 	}
 
-	//¾Ö²¿Ìæ»»×îĞ¡Éú³ÉÊ÷Ëã·¨
+	//å±€éƒ¨æ›¿æ¢æœ€å°ç”Ÿæˆæ ‘ç®—æ³•
 	void particalExchange(linkedWDigraph<T>& tar)
 	{
 		int tarn = tar.numberOfVertices();
 		for (int v = 1; v <= tarn; v++)
 		{
-			cout << "\nÉ¨Ãè" << v << "µÄÁÚ½ÓÁ´±í\n";
+			cout << "\næ‰«æ" << v << "çš„é‚»æ¥é“¾è¡¨\n";
 			myIterator *iv = iterator(v);
 			int u;
 			while ((u = iv->next()) != 0)
@@ -352,11 +362,11 @@ public:
 				{
 					edge<T> temp = getEdge(v, u);
 					edge<T> temp2 = getEdge(u, v);
-					cout << "³¢ÊÔÌí¼Ó±ß" << temp << endl;
+					cout << "å°è¯•æ·»åŠ è¾¹" << temp << endl;
 					tar.insertEdge(&temp);
 					tar.insertEdge(&temp2);
 					tar.exchange(temp.vertex1());
-					cout << "µ±Ç°Í¼£º\n" << tar;
+					cout << "å½“å‰å›¾ï¼š\n" << tar;
 				}
 				
 			}
@@ -397,25 +407,25 @@ public:
 				cout <<  " ---> " << u  ;
 
 			}
-			cout << " ---> " << tu <<" ĞÎ³É»·\n";
+			cout << " ---> " << tu <<" å½¢æˆç¯\n";
 			eraseEdge(maxu, maxv);
 			eraseEdge(maxv, maxu);
 			
-			cout << "(" << maxv << "," << maxu << ")" << "ĞèÒªÉ¾È¥\n";
+			cout << "(" << maxv << "," << maxu << ")" << "éœ€è¦åˆ å»\n";
 		}
 		else
 		{
-			cout << "³É¹¦Ìí¼Ó±ß\n";
+			cout << "æˆåŠŸæ·»åŠ è¾¹\n";
 		}
 		
 		
 	}
 
 
-	//Bellman-FordËã·¨
+	//Bellman-Fordç®—æ³•
 	int bellmanFord(int s, vector<vertex> &temp)
 	{
-		//³õÊ¼»¯
+		//åˆå§‹åŒ–
 		for (int i = 1; i <= n; i++)
 		{
 			temp[i].distance = 1000;
@@ -423,7 +433,7 @@ public:
 		}
 		temp[s].distance = 0;
 
-		//v-1´ÎËÉ³Ú²Ù×÷
+		//v-1æ¬¡æ¾å¼›æ“ä½œ
 		for (int i = 1; i < n; i++)
 		{
 
@@ -435,18 +445,18 @@ public:
 				{
 					int u = currentNode->element.vertex;
 					int w = currentNode->element.weight;
-					cout <<"²Ù×÷±ß " << v << "," << u << "    " ;
+					cout <<"æ“ä½œè¾¹ " << v << "," << u << "    " ;
 
 					if (temp[v].distance != 1000 && temp[u].distance > temp[v].distance + w)
 					{
 						cout << temp[u].distance <<" --->" << temp[v].distance + w;
 						temp[u].distance = temp[v].distance + w;
 						temp[u].pi = v;
-						cout << "  Ç°Çı½áµã  " << v << endl;
+						cout << "  å‰é©±ç»“ç‚¹  " << v << endl;
 					}
 					else
 					{
-						cout << "²»ĞèÒª¸üĞÂ\n";
+						cout << "ä¸éœ€è¦æ›´æ–°\n";
 					}
 					
 					currentNode = currentNode->next;
@@ -456,7 +466,7 @@ public:
 
 		}
 
-		//¶ÔÃ¿¸ö±ß½øĞĞËÉ³Ú£¬Èç¹û¿ÉÒÔËÉ³ÚÔòÓĞ¸º»·
+		//å¯¹æ¯ä¸ªè¾¹è¿›è¡Œæ¾å¼›ï¼Œå¦‚æœå¯ä»¥æ¾å¼›åˆ™æœ‰è´Ÿç¯
 		for (int v = 1; v <= n; v++)
 		{
 			chainNode<wEdge<T> > *firstNode = aList[v].getfirstNode();
@@ -480,7 +490,7 @@ public:
 
 	}
 
-	//Í¨¹ıBellman-FordËã·¨ÕÒ¸º»·
+	//é€šè¿‡Bellman-Fordç®—æ³•æ‰¾è´Ÿç¯
 	void negCircle()
 	{
 		vector<vertex> tmp(n + 1);
@@ -515,10 +525,10 @@ public:
 		cout << endl;
 	}
 
-	//¶¯Ì¬¹æ»®½âÊı¾İÁ¿Ğ¡µÄTPSÎÊÌâ
+	//åŠ¨æ€è§„åˆ’è§£æ•°æ®é‡å°çš„TPSé—®é¢˜
 	T dynamic_TPS(int source, int v, vector<int> S, vector<int> &path)
 	{
-		cout << "´Óµã" << v << "¿ªÊ¼£¬´Ó¼¯ºÏ{";
+		cout << "ä»ç‚¹" << v << "å¼€å§‹ï¼Œä»é›†åˆ{";
 		for (int i = 0; i < S.size(); i++)
 		{
 			cout << S[i];
@@ -527,16 +537,16 @@ public:
 				cout << ",";
 			}
 		}
-		cout << "}¿ªÊ¼É¨Ãè\n";
+		cout << "}å¼€å§‹æ‰«æ\n";
 
 		if (S.size() == 1)
 		{
 			//path.insert(path.begin(), S[0]);
 			path.push_back(S[0]);
 			path.push_back(source);
-			cout << "´Óµã" << v << "¿ªÊ¼£¬´Ó¼¯ºÏ{"<<S[0]<<"}É¨Ãè½áÊø  ";
-			cout << "×î¶ÌÂ·¾¶Îª" << v << "," << S[0] << "," << source << "  ";
-			cout << "  ³¤¶ÈÎª" << getEdge(v, S[0]).weight() + getEdge(S[0], source) << endl;
+			cout << "ä»ç‚¹" << v << "å¼€å§‹ï¼Œä»é›†åˆ{"<<S[0]<<"}æ‰«æç»“æŸ  ";
+			cout << "æœ€çŸ­è·¯å¾„ä¸º" << v << "," << S[0] << "," << source << "  ";
+			cout << "  é•¿åº¦ä¸º" << getEdge(v, S[0]).weight() + getEdge(S[0], source) << endl;
 			return getEdge(v, S[0]).weight() + getEdge(S[0], source);
 		}
 		vector<vector<int> > tpath(S.size());
@@ -559,7 +569,7 @@ public:
 
 		tpath[minindex].insert(tpath[minindex].begin(), S[minindex]);
 
-		cout << "´Óµã" << v << "¿ªÊ¼£¬´Ó¼¯ºÏ{";
+		cout << "ä»ç‚¹" << v << "å¼€å§‹ï¼Œä»é›†åˆ{";
 		for (int i = 0; i < S.size(); i++)
 		{
 			cout << S[i];
@@ -568,8 +578,8 @@ public:
 				cout << ",";
 			}
 		}
-		cout << "}É¨Ãè½áÊø  ";
-		cout << "×î¶ÌÂ·¾¶Îª" << v << ",";
+		cout << "}æ‰«æç»“æŸ  ";
+		cout << "æœ€çŸ­è·¯å¾„ä¸º" << v << ",";
 		for (int i = 0; i < tpath[minindex].size(); i++)
 		{
 			cout << tpath[minindex][i];
@@ -578,7 +588,7 @@ public:
 				cout << ",";
 			}
 		}
-		cout << "  ³¤¶ÈÎª" << min << endl;
+		cout << "  é•¿åº¦ä¸º" << min << endl;
 		if (v == source)
 		{
 			tpath[minindex].insert(tpath[minindex].begin(), source);
@@ -588,7 +598,7 @@ public:
 
 	}
 
-	// ¹ã¶ÈÓÅÏÈËÑË÷ 
+	// å¹¿åº¦ä¼˜å…ˆæœç´¢ 
 	void bfs(int v, vector<vertex> &temp)
 	{// Breadth-first search. reach[i] is set to label for
 	 // all vertices reachable from vertex v.
@@ -622,47 +632,47 @@ public:
 			delete iw;
 		}
 	}
-	//ÍØÆËÅÅĞò 
+	//æ‹“æ‰‘æ’åº 
 	bool topologicalOrder(int *theOrder)
-	{// ·µ»Øfalseµ±ÇÒ½öµ±ÓĞÏòÍ¼Ã»ÓĞÍØÆËĞòÁĞ 
-	 // Èç¹û´æÔÚÒ»¸öÍØÆËĞòÁĞ£¬½«Æä¸³¸øtheOrder[0:n-1]
+	{// è¿”å›falseå½“ä¸”ä»…å½“æœ‰å‘å›¾æ²¡æœ‰æ‹“æ‰‘åºåˆ— 
+	 // å¦‚æœå­˜åœ¨ä¸€ä¸ªæ‹“æ‰‘åºåˆ—ï¼Œå°†å…¶èµ‹ç»™theOrder[0:n-1]
 	 // such an order exists. 
-	 // È·±£ÕâÊÇÒ»¸öÓĞÏòÍ¼ 
+	 // ç¡®ä¿è¿™æ˜¯ä¸€ä¸ªæœ‰å‘å›¾ 
 
 		int n = numberOfVertices();
 
-		// ¼ÆËãÈë¶È 
+		// è®¡ç®—å…¥åº¦ 
 		int *inDegree = new int[n + 1];
 		fill(inDegree + 1, inDegree + n + 1, 0);
 		for (int i = 1; i <= n; i++)
-		{// ¶¥µãiµÄ³ö±ß 
+		{// é¡¶ç‚¹içš„å‡ºè¾¹ 
 			myIterator *ii = iterator(i);
 			//vertexIterator<T> *ii = iterator(i);
 			int u;
 			while ((u = ii->next()) != 0)
-				// ·ÃÎÊ¶¥µãiµÄÒ»¸öÁÚ½Óµã 
+				// è®¿é—®é¡¶ç‚¹içš„ä¸€ä¸ªé‚»æ¥ç‚¹ 
 				inDegree[u]++;
 		}
 
-		// °ÑÈë¶ÈÎª0µÄ¶¥µã¼ÓÈëÕ» 
+		// æŠŠå…¥åº¦ä¸º0çš„é¡¶ç‚¹åŠ å…¥æ ˆ 
 		arrayStack<int> stack;
 		for (int i = 1; i <= n; i++)
 			if (inDegree[i] == 0)
 				stack.push(i);
 
-		// Éú³ÉÍØÆËĞòÁĞ 
-		int j = 0;  // Êı×étheOrderµÄË÷Òı 
+		// ç”Ÿæˆæ‹“æ‰‘åºåˆ— 
+		int j = 0;  // æ•°ç»„theOrderçš„ç´¢å¼• 
 		while (!stack.empty())
-		{// ´ÓÕ»ÖĞÌáÈ¡¶¥µã 
+		{// ä»æ ˆä¸­æå–é¡¶ç‚¹ 
 			int nextVertex = stack.top();
 			stack.pop();
 			theOrder[j++] = nextVertex;
-			// ¸üĞÂÈë¶È
+			// æ›´æ–°å…¥åº¦
 			myIterator  *iNextVertex = iterator(nextVertex);
 			//vertexIterator<T> *iNextVertex = iterator(nextVertex);
 			int u;
 			while ((u = iNextVertex->next()) != 0)
-			{// ·ÃÎÊ¶¥µãnextVertexµÄÏÂÒ»¸öÁÚ½Ó¶¥µã 
+			{// è®¿é—®é¡¶ç‚¹nextVertexçš„ä¸‹ä¸€ä¸ªé‚»æ¥é¡¶ç‚¹ 
 				inDegree[u]--;
 				if (inDegree[u] == 0)
 					stack.push(u);
@@ -670,18 +680,18 @@ public:
 		}
 		return (j == n);
 	}
-	//Éî¶ÈÓÅÏÈËÑË÷ 
+	//æ·±åº¦ä¼˜å…ˆæœç´¢ 
 	void dfs1(int v, vector<vertex> &temp)
 	{// Depth-first search. reach[i] is set to label for all
 	 // vertices reachable from vertex v
-		cout << "´Ó¶¥µã" << v << "¿ªÊ¼Éî¶ÈÓÅÏÈËÑË÷\n";
+		cout << "ä»é¡¶ç‚¹" << v << "å¼€å§‹æ·±åº¦ä¼˜å…ˆæœç´¢\n";
 		this->temp = temp;
 		this->t = 1;
 		this->temp[v].root = true;
 		rDfs1(v);
 		temp = this->temp;
 	}
-	//Éî¶ÈÓÅÏÈËÑË÷ 
+	//æ·±åº¦ä¼˜å…ˆæœç´¢ 
 	void dfs2(int v, vector<vertex> &temp)
 	{
 		this->temp = temp;
@@ -690,11 +700,11 @@ public:
 		rDfs2(v);
 		temp = this->temp;
 	}
-	//Éî¶ÈÓÅÏÈËÑË÷ 
+	//æ·±åº¦ä¼˜å…ˆæœç´¢ 
 	int dfs3(int v, vector<vertex> &temp)
 	{// Depth-first search. reach[i] is set to label for all
 	 // vertices reachable from vertex v
-		cout << "´Ó¶¥µã" << v << "¿ªÊ¼Éî¶ÈÓÅÏÈËÑË÷\n";
+		cout << "ä»é¡¶ç‚¹" << v << "å¼€å§‹æ·±åº¦ä¼˜å…ˆæœç´¢\n";
 		this->temp = temp;
 		this->t = 1;
 		this->temp[v].root = true;

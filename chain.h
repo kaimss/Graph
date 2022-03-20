@@ -1,6 +1,8 @@
 ﻿#pragma once
-#include"chainNode.h"
-#include<iostream>
+#include "chainNode.h"
+#include <iostream>
+#include <sstream>
+
 using namespace std;
 
 template<class T>
